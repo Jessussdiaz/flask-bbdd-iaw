@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>{% block title %} Vehículos {% endblock %}</h1>
+    <ul>
+        {% for tabla in entidades %}
+            <li>{{ tabla['name'] }}</li>
+        {% endfor %}
+    </ul>
+{% endblock %}
