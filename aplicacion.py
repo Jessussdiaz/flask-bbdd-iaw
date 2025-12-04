@@ -23,19 +23,19 @@ def home():
 @app.route("/coches/")
 def coches():
     db = get_db_connection()
-    c = db.execute("SELECT * FROM coches").fetchall()
-    if c is None:
+    coches = db.execute("SELECT * FROM coches").fetchall()
+    if coches is None:
         return redirect(url_for("home"))
-    return render_template("coches.html", c=c)
+    return render_template("coches.html", coches=coches)
 
 
 @app.route("/marcas/")
 def marcas():
     db = get_db_connection()
-    m = db.execute("SELECT * FROM marcas").fetchall()
-    if m is None:
+    marcas = db.execute("SELECT * FROM marcas").fetchall()
+    if marcas is None:
         return redirect(url_for("home"))
-    return render_template("marcas.html", m=m)
+    return render_template("marcas.html", marcas=marcas)
 
 
 app.run(host="0.0.0.0", port=5000, debug=True)
