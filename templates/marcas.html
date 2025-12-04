@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>{% block title %} Marcas {% endblock %}</h1>
+        <table class="table table-striped">
+            <th>
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>pais</th>
+                    <th>fundador</th>
+                    <th>año_fundacion</th>
+                </tr>
+            </th>
+            <tbody>
+                {% for marca in marcas %}
+                <tr>
+                    <td>{{ marca['id'] }}</td>
+                    <td>{{ marca['nombre'] }}</td>
+                    <td>{{ marca['pais'] }}</td>
+                    <td>{{ marca['fundador'] }}</td>
+                    <td>{{ marca['anio_fundacion'] }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+{% endblock %}

@@ -5,6 +5,7 @@
     <ul>
         {% for tabla in entidades %}
             <li>{{ tabla['name'] }}</li>
+            <li><a class="btn btn-info" style="width: 100px;" href="{{ url_for(tabla['name']) }}">👁 Ver</a></li>
         {% endfor %}
     </ul>
 {% endblock %}

@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request, redirect, url_for
 import sqlite3
 # Autores: Alejandro Luna Paredes y Jesús Díaz Mata
 # Fecha 03/12/2025
@@ -20,4 +20,22 @@ def home():
     conn.close()
     return render_template('home.html', entidades=entidades)
 
-app.run(debug=True)
+@app.route("/coches/")
+def coches():
+    db = get_db_connection()
+    c = db.execute("SELECT * FROM coches").fetchall()
+    if c is None:
+        return redirect(url_for("home"))
+    return render_template("coches.html", c=c)
+
+
+@app.route("/marcas/")
+def marcas():
+    db = get_db_connection()
+    m = db.execute("SELECT * FROM marcas").fetchall()
+    if m is None:
+        return redirect(url_for("home"))
+    return render_template("marcas.html", m=m)
+
+
+app.run(host="0.0.0.0", port=5000, debug=True)
