@@ -1,11 +1,15 @@
-{% extends 'base.html' %}
-
 {% block content %}
-    <h1>{% block title %} Vehículos {% endblock %}</h1>
-    <ul>
-        {% for tabla in entidades %}
-            <li>{{ tabla['name'] }}</li>
-            <li><a class="btn btn-info" style="width: 100px;" href="{{ url_for(tabla['name']) }}">👁 Ver</a></li>
-        {% endfor %}
-    </ul>
+<div class="container mt-4">
+  <h1 class="mb-3">Página principal</h1>
+
+  <ul>
+    {% for tabla in entidades %}
+      <li>
+        {{ tabla.titulo }}
+        <a class="btn btn-info" style="width: 100px;"
+           href="{{ url_for(tabla.endpoint) }}">👁 Ver</a>
+      </li>
+    {% endfor %}
+  </ul>
+</div>
 {% endblock %}

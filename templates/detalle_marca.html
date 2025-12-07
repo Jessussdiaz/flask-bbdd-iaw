@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <title>{{ marca['nombre'] }} - Modelos</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 960px;
+            margin: 20px auto;
+        }
+        h1 { font-size: 32px; margin-bottom: 5px; }
+        .subtitulo { color: #666; margin-bottom: 25px; }
+        h2 { font-size: 20px; margin: 20px 0 10px; }
+
+        .modelo-item {
+            display: grid;
+            grid-template-columns: 120px 1fr 160px;
+            align-items: center;
+            padding: 15px 0;
+            border-top: 1px solid #eee;
+        }
+        .modelo-item img { max-width: 110px; }
+        .modelo-nombre { font-size: 20px; font-weight: bold; }
+
+        .precio-box { text-align: right; }
+        .precio-desde {
+            display: block;
+            font-size: 12px;
+            color: #777;
+            margin-bottom: 4px;
+        }
+        .precio-actual {
+            display: inline-block;
+            padding: 8px 14px;
+            border-radius: 4px;
+            background-color: #f15a4a;
+            color: #fff;
+            font-weight: bold;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="mb-0">{{ marca['nombre'] }}</h1>
+    <div>
+      <a href="{{ url_for('editar_marca', marca_id=marca['id']) }}"
+         class="btn btn-sm btn-outline-primary">Editar marca</a>
+      <a href="{{ url_for('borrar_marca', marca_id=marca['id']) }}"
+         class="btn btn-sm btn-outline-danger">Eliminar marca</a>
+      <a href="{{ url_for('lista_marcas') }}" class="btn btn-sm btn-secondary">Volver</a>
+    </div>
+    </div>
+    <p class="subtitulo">
+        Precios y modelos de coches {{ marca['nombre'] }} que actualmente puedes comprar.
+    </p>
+
+<h2>PRECIOS Y MODELOS ACTUALES</h2>
+
+{% for modelo in modelos %}
+  <div class="modelo-item">
+
+    <!-- Columna 1: imagen -->
+    <div>
+      {% if marca['nombre'] == 'BMW' %}
+        <img src="{{ url_for('static', filename='vehiculos/img/m3.png') }}"
+             alt="{{ modelo['modelo'] }}"
+             style="max-width: 110px;">
+      {% elif marca['nombre'] == 'Ford' %}
+        <img src="{{ url_for('static', filename='vehiculos/img/mustang.jpg') }}"
+             alt="{{ modelo['modelo'] }}"
+             style="max-width: 110px;">
+      {% elif marca['nombre'] == 'Toyota' %}
+        <img src="{{ url_for('static', filename='vehiculos/img/corolla.jpg') }}"
+             alt="{{ modelo['modelo'] }}"
+             style="max-width: 110px;">
+      {% else %}
+            <div class="marca-logo rounded-circle d-flex align-items-center justify-content-center me-3"
+                style="width: 48px; height: 48px; background-color: #eee;">
+              <span class="fw-bold">{{ marca['nombre'][0:2] }}</span>
+            </div>
+      {% endif %}
+    </div>
+
+    <!-- Columna 2: información del modelo -->
+    <div>
+      <div class="modelo-nombre" style="font-size: 20px; font-weight: bold;">
+        {{ modelo['modelo'] }}
+      </div>
+      <small class="text-muted">
+        Año {{ modelo['anio'] }} · {{ modelo['tipo_motor'] }} · {{ modelo['potencia'] }} CV
+      </small>
+    </div>
+
+    <!-- Columna 3: precio -->
+    <div class="precio-box">
+      <span class="precio-desde">Desde</span>
+
+      {% if marca['nombre'] == 'BMW' and modelo['modelo'] == 'M3' %}
+        <span class="precio-actual">78.000 €</span>
+
+      {% elif marca['nombre'] == 'Ford' and modelo['modelo'] == 'Mustang' %}
+        <span class="precio-actual">65.000 €</span>
+
+      {% elif marca['nombre'] == 'Toyota' and modelo['modelo'] == 'Corolla' %}
+        <span class="precio-actual">23.000 €</span>
+
+      {% else %}
+        <span class="precio-actual">Consultar</span>
+      {% endif %}
+  </div>
+{% endfor %}
+
+</body>
+</html>

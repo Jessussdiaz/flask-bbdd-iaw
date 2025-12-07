@@ -1,0 +1,71 @@
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 960px;
+            margin: 20px auto;
+        }
+
+        h1 {
+            font-size: 32px;
+            margin-bottom: 5px;
+        }
+
+        .subtitulo {
+            color: #666;
+            margin-bottom: 25px;
+        }
+
+        h2 {
+            font-size: 20px;
+            margin: 20px 0 10px;
+        }
+
+        .modelo-item {
+            display: grid;
+            grid-template-columns: 120px 1fr 160px;
+            align-items: center;
+            padding: 15px 0;
+            border-top: 1px solid #eee;
+        }
+
+        .modelo-item img {
+            max-width: 110px;
+        }
+
+        .modelo-nombre {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 4px;
+        }
+
+        .precio-box {
+            text-align: right;
+        }
+
+        .precio-desde {
+            display: block;
+            font-size: 12px;
+            color: #777;
+            margin-bottom: 4px;
+        }
+
+        .precio-actual {
+            display: inline-block;
+            padding: 8px 14px;
+            border-radius: 4px;
+            background-color: #f15a4a;
+            color: #fff;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .precio-antes {
+            display: block;
+            font-size: 12px;
+            color: #999;
+            text-decoration: line-through;
+            margin-top: 4px;
+        }
+
+
+
+        

@@ -1,41 +1,202 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, abort
 import sqlite3
 # Autores: Alejandro Luna Paredes y Jesús Díaz Mata
 # Fecha 03/12/2025
 
 app = Flask(__name__)
 
+
 def get_db_connection():
     conn = sqlite3.connect('coches.db')
     conn.row_factory = sqlite3.Row
     return conn
 
-@app.route('/')
+
+# --------------------------------------------------
+# HOME
+# --------------------------------------------------
+@app.route("/")
 def home():
-    conn = get_db_connection()
-    entidades = conn.execute("""
-    SELECT name FROM sqlite_master 
-    WHERE type='table' AND name NOT LIKE 'sqlite_%';
-""").fetchall()
-    conn.close()
-    return render_template('home.html', entidades=entidades)
-
-@app.route("/coches/")
-def coches():
-    db = get_db_connection()
-    coches = db.execute("SELECT * FROM coches").fetchall()
-    if coches is None:
-        return redirect(url_for("home"))
-    return render_template("coches.html", coches=coches)
+    entidades = [
+        {
+            "titulo": "Marcas",
+            "descripcion": "Listado de marcas de vehículos.",
+            "endpoint": "lista_marcas",
+        },
+        {
+            "titulo": "Vehículos",
+            "descripcion": "Listado completo de vehículos.",
+            "endpoint": "lista_coches",
+        },
+    ]
+    return render_template("home.html", entidades=entidades)
 
 
+# --------------------------------------------------
+# LISTADO MARCAS
+# --------------------------------------------------
 @app.route("/marcas/")
-def marcas():
+def lista_marcas():
     db = get_db_connection()
-    marcas = db.execute("SELECT * FROM marcas").fetchall()
-    if marcas is None:
-        return redirect(url_for("home"))
+    marcas = db.execute("""
+        SELECT m.id,
+               m.nombre,
+               m.pais,
+               m.anio_fundacion,
+               COUNT(c.id) AS num_modelos
+        FROM marcas m
+        LEFT JOIN coches c ON c.id_marca = m.id
+        GROUP BY m.id, m.nombre, m.pais, m.anio_fundacion
+        ORDER BY m.nombre
+    """).fetchall()
+    db.close()
     return render_template("marcas.html", marcas=marcas)
 
 
-app.run(host="0.0.0.0", port=5000, debug=True)
+# --------------------------------------------------
+# LISTADO COCHES (para coches.html)
+# --------------------------------------------------
+@app.route("/coches/")
+def lista_coches():
+    conn = get_db_connection()
+    coches = conn.execute("""
+        SELECT c.id,
+               c.modelo,
+               c.anio,
+               c.tipo_motor,
+               c.potencia,
+               m.nombre AS marca
+        FROM coches c
+        LEFT JOIN marcas m ON m.id = c.id_marca
+        ORDER BY marca, modelo
+    """).fetchall()
+    conn.close()
+    return render_template("coches.html", coches=coches)
+
+
+# --------------------------------------------------
+# DETALLE MARCA (coches de esa marca)
+# --------------------------------------------------
+@app.route('/marca/<int:marca_id>')
+def detalle_marca(marca_id):
+    conn = get_db_connection()
+    marca = conn.execute(
+        "SELECT * FROM marcas WHERE id = ?",
+        (marca_id,)
+    ).fetchone()
+
+    if marca is None:
+        conn.close()
+        abort(404)
+
+    modelos = conn.execute(
+        "SELECT * FROM coches WHERE id_marca = ? ORDER BY modelo",
+        (marca_id,)
+    ).fetchall()
+
+    conn.close()
+    return render_template("detalle_marca.html", marca=marca, modelos=modelos)
+
+
+# --------------------------------------------------
+# EDITAR MARCA
+# --------------------------------------------------
+@app.route("/marca/<int:marca_id>/editar", methods=["GET", "POST"])
+def editar_marca(marca_id):
+    conn = get_db_connection()
+    marca = conn.execute(
+        "SELECT * FROM marcas WHERE id = ?",
+        (marca_id,)
+    ).fetchone()
+
+    if marca is None:
+        conn.close()
+        abort(404)
+
+    if request.method == "POST":
+        nombre = request.form["nombre"]
+        pais = request.form["pais"]
+        anio_fundacion = request.form["anio_fundacion"]
+
+        conn.execute(
+            "UPDATE marcas SET nombre = ?, pais = ?, anio_fundacion = ? WHERE id = ?",
+            (nombre, pais, anio_fundacion, marca_id)
+        )
+        conn.commit()
+        conn.close()
+        return redirect(url_for("detalle_marca", marca_id=marca_id))
+
+    conn.close()
+    return render_template("editar_marca.html", marca=marca)
+
+
+# --------------------------------------------------
+# EDITAR COCHE
+# --------------------------------------------------
+@app.route("/coche/<int:coche_id>/editar", methods=["GET", "POST"])
+def editar_coche(coche_id):
+    conn = get_db_connection()
+    coche = conn.execute(
+        "SELECT * FROM coches WHERE id = ?",
+        (coche_id,)
+    ).fetchone()
+
+    if coche is None:
+        conn.close()
+        abort(404)
+
+    if request.method == "POST":
+        modelo = request.form["modelo"]
+        anio = request.form["anio"]
+        tipo_motor = request.form["tipo_motor"]
+        potencia = request.form["potencia"]
+
+        conn.execute("""
+            UPDATE coches
+            SET modelo = ?, anio = ?, tipo_motor = ?, potencia = ?
+            WHERE id = ?
+        """, (modelo, anio, tipo_motor, potencia, coche_id))
+
+        conn.commit()
+        id_marca = coche["id_marca"]  # para volver al detalle de su marca
+        conn.close()
+        return redirect(url_for("detalle_marca", marca_id=id_marca))
+
+    conn.close()
+    return render_template("editar_coche.html", coche=coche)
+
+
+# --------------------------------------------------
+# BORRAR MARCA
+# --------------------------------------------------
+@app.route("/marca/<int:marca_id>/borrar", methods=["GET", "POST"])
+def borrar_marca(marca_id):
+    conn = get_db_connection()
+    marca = conn.execute(
+        "SELECT * FROM marcas WHERE id = ?",
+        (marca_id,)
+    ).fetchone()
+
+    if marca is None:
+        conn.close()
+        abort(404)
+
+    if request.method == "POST":
+        confirmar = request.form.get("confirmar")
+
+        if confirmar == "si":
+            conn.execute("DELETE FROM coches WHERE id_marca = ?", (marca_id,))
+            conn.execute("DELETE FROM marcas WHERE id = ?", (marca_id,))
+            conn.commit()
+            conn.close()
+            return redirect(url_for("lista_marcas"))
+        else:
+            conn.close()
+            return redirect(url_for("detalle_marca", marca_id=marca_id))
+
+    conn.close()
+    return render_template("borrar_marca.html", marca=marca)
+
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5000, debug=True)

@@ -1,27 +1,65 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
+{% block title %}Marcas de coches{% endblock %}
 
 {% block content %}
-    <h1>{% block title %} Marcas {% endblock %}</h1>
-        <table class="table table-striped">
-            <th>
-                <tr>
-                    <th>ID</th>
-                    <th>Nombre</th>
-                    <th>pais</th>
-                    <th>fundador</th>
-                    <th>año_fundacion</th>
-                </tr>
-            </th>
-            <tbody>
-                {% for marca in marcas %}
-                <tr>
-                    <td>{{ marca['id'] }}</td>
-                    <td>{{ marca['nombre'] }}</td>
-                    <td>{{ marca['pais'] }}</td>
-                    <td>{{ marca['fundador'] }}</td>
-                    <td>{{ marca['anio_fundacion'] }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+<div class="container mt-4">
+
+  <h1 class="text-center">Listado Vehiculos</h1>
+  <h2 class="text-center mb-4">Marcas de coches</h2>
+
+  <!-- CONTENEDOR DE LISTA: sin d-flex, solo list-group -->
+  <div class="list-group w-75 mx-auto">
+    {% for marca in marcas %}
+      <a href="{{ url_for('detalle_marca', marca_id=marca['id']) }}"
+         class="list-group-item list-group-item-action d-flex align-items-center justify-content-between">
+
+        <div class="d-flex align-items-center">
+          {% if marca['nombre'] == 'BMW' %}
+            <img src="{{ url_for('static', filename='logos/bmw.png') }}"
+                 alt="{{ marca['nombre'] }}"
+                 class="me-3"
+                 style="width: 48px; height: 48px; object-fit: contain;">
+          {% elif marca['nombre'] == 'Ford' %}
+            <img src="{{ url_for('static', filename='logos/ford.png') }}"
+                 alt="{{ marca['nombre'] }}"
+                 class="me-3"
+                 style="width: 48px; height: 48px; object-fit: contain;">
+          {% elif marca['nombre'] == 'Toyota' %}
+            <img src="{{ url_for('static', filename='logos/toyota.png') }}"
+                 alt="{{ marca['nombre'] }}"
+                 class="me-3"
+                 style="width: 48px; height: 48px; object-fit: contain;">
+          {% else %}
+            <div class="marca-logo rounded-circle d-flex align-items-center justify-content-center me-3"
+                 style="width: 48px; height: 48px; background-color: #eee;">
+              <span class="fw-bold">{{ marca['nombre'][0:2] }}</span>
+            </div>
+          {% endif %}
+
+          <div>
+            <h5 class="mb-0">{{ marca['nombre'] }}</h5>
+            <small class="text-muted">
+              {{ marca['pais'] }} · Fundada en {{ marca['anio_fundacion'] }}
+            </small>
+          </div>
+        </div>
+
+        <div class="text-end">
+          <div class="mb-2">
+            <span class="text-primary">
+              {{ marca['num_modelos'] }} modelo(s) disponible(s)
+            </span>
+          </div>
+          <div>
+            <a href="{{ url_for('editar_marca', marca_id=marca['id']) }}"
+               class="btn btn-sm btn-outline-primary">Editar</a>
+            <a href="{{ url_for('borrar_marca', marca_id=marca['id']) }}"
+               class="btn btn-sm btn-outline-danger">Eliminar</a>
+          </div>
+        </div>
+
+      </a>
+    {% endfor %}
+  </div>
+</div>
 {% endblock %}
