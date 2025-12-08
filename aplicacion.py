@@ -137,10 +137,7 @@ def editar_marca(marca_id):
 @app.route("/coche/<int:coche_id>/editar", methods=["GET", "POST"])
 def editar_coche(coche_id):
     conn = get_db_connection()
-    coche = conn.execute(
-        "SELECT * FROM coches WHERE id = ?",
-        (coche_id,)
-    ).fetchone()
+    coche = conn.execute("SELECT * FROM coches WHERE id = ?", (coche_id,)).fetchone()
 
     if coche is None:
         conn.close()
@@ -159,9 +156,10 @@ def editar_coche(coche_id):
         """, (modelo, anio, tipo_motor, potencia, coche_id))
 
         conn.commit()
-        id_marca = coche["id_marca"]  # para volver al detalle de su marca
         conn.close()
-        return redirect(url_for("detalle_marca", marca_id=id_marca))
+        
+        # CAMBIO AQUÍ: Redirigir a la lista general de coches
+        return redirect(url_for("lista_coches"))
 
     conn.close()
     return render_template("editar_coche.html", coche=coche)
@@ -245,6 +243,32 @@ def añadircoche():
     conn.close()
     return render_template("añadircoche.html", marcas=marcas)
 
+# BORRAR COCHE
+
+@app.route("/coche/<int:coche_id>/borrar", methods=["GET", "POST"])
+def borrar_coche(coche_id):
+    conn = get_db_connection()
+    
+    # Consulta mejorada con JOIN para traer el nombre de la marca
+    coche = conn.execute("""
+        SELECT c.*, m.nombre AS nombre_marca
+        FROM coches c
+        JOIN marcas m ON c.id_marca = m.id
+        WHERE c.id = ?
+    """, (coche_id,)).fetchone()
+    
+    if coche is None:
+        conn.close()
+        abort(404)
+
+    if request.method == "POST":
+        conn.execute("DELETE FROM coches WHERE id = ?", (coche_id,))
+        conn.commit()
+        conn.close()
+        return redirect(url_for("lista_coches"))
+
+    conn.close()
+    return render_template("borrar_coche.html", coche=coche)
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)

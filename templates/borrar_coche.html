@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="container mt-5">
+    <div class="card shadow">
+        <div class="card-body text-center">
+            <h2 class="card-title text-danger">¿Eliminar Coche?</h2>
+            <hr>
+            
+            <p class="lead">
+                Vas a eliminar el modelo: <strong>{{ coche['modelo'] }}</strong>
+                <br>
+                de la marca: <strong>{{ coche['nombre_marca'] }}</strong>
+            </p>
+
+            <div class="alert alert-warning" role="alert">
+                <strong>Atención:</strong> Esta acción borrará este registro de forma permanente.
+            </div>
+
+            <form method="post" class="mt-4">
+                <button type="submit" class="btn btn-danger btn-lg px-4">
+                    🗑️ Sí, eliminar
+                </button>
+                <a href="{{ url_for('lista_coches') }}" class="btn btn-secondary btn-lg px-4">
+                    Cancelar
+                </a>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

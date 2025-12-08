@@ -1,17 +1,17 @@
 {% extends "base.html" %}
-{% block title %}Editar vehículo{% endblock %}
+{% block title %}Editar Coche{% endblock %}
 
 {% block content %}
 <div class="row justify-content-center mt-4">
   <div class="col-12 col-md-8 col-lg-6">
-    <div class="card shadow-sm">
+    <div class="card shadow-sm form-card">
       <div class="card-body">
-        <h1 class="h4 mb-3 text-center">Editar vehículo</h1>
+        <h1 class="h4 mb-3 text-center">✏️ Editar Coche</h1>
 
         <form method="post" novalidate>
 
           <div class="mb-3">
-            <label for="modelo" class="form-label">Modelo</label>
+            <label for="modelo" class="form-label">Modelo del vehículo</label>
             <input type="text" class="form-control" id="modelo" name="modelo"
                    required value="{{ coche['modelo'] }}">
           </div>
@@ -19,28 +19,28 @@
           <div class="mb-3">
             <label for="anio" class="form-label">Año</label>
             <input type="number" class="form-control" id="anio" name="anio"
-                   value="{{ coche['anio'] }}">
+                   required value="{{ coche['anio'] }}">
           </div>
 
           <div class="mb-3">
-            <label for="tipo_motor" class="form-label">Tipo de motor</label>
+            <label for="tipo_motor" class="form-label">Tipo de Motor</label>
             <input type="text" class="form-control" id="tipo_motor" name="tipo_motor"
-                   value="{{ coche['tipo_motor'] }}">
+                   required value="{{ coche['tipo_motor'] }}">
           </div>
 
           <div class="mb-3">
             <label for="potencia" class="form-label">Potencia (CV)</label>
             <input type="number" class="form-control" id="potencia" name="potencia"
-                   value="{{ coche['potencia'] }}">
+                   required value="{{ coche['potencia'] }}">
           </div>
 
-          <div class="d-flex gap-2 justify-content-between">
+          <div class="d-flex gap-2 justify-content-between mt-4">
             <button type="submit" class="btn btn-primary flex-grow-1">Guardar cambios</button>
-            <a href="{{ url_for('detalle_marca', marca_id=coche['id_marca']) }}" class="btn btn-secondary">Cancelar</a>
+            
+            <a href="{{ url_for('lista_coches') }}" class="btn btn-secondary">Cancelar</a>
           </div>
 
         </form>
-
       </div>
     </div>
   </div>
