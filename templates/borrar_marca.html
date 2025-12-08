@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="container mt-5">
+    <div class="card">
+        <div class="card-body">
+            <h2 class="card-title">¿Eliminar Marca?</h2>
+
+            <p>Vas a eliminar la marca: <strong>{{ marca['nombre'] }}</strong></p>
+
+            {% if total_coches > 0 %}
+            <div class="alert alert-warning" role="alert">
+                <strong>Atención:</strong> Esta marca tiene {{ total_coches }} coche(s) registrado(s). También serán eliminados.
+            </div>
+            {% endif %}
+
+            <form method="post" class="mt-3">
+                <button type="submit" class="btn btn-danger">Sí, eliminar</button>
+                <a href="{{ url_for('detalle_marca', marca_id=marca['id']) }}" class="btn btn-secondary">Cancelar</a>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+

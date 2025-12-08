@@ -2,9 +2,19 @@
 {% block title %}Marcas de coches{% endblock %}
 
 {% block content %}
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="{{ url_for('home') }}">Pagina Principal</a>
+        <li class="nav-item">
+          <a class="nav-link" href="{{ url_for('añadirmarca') }}">Añadir Marca</a>
+        </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
 <div class="container mt-4">
 
-  <h1 class="text-center">Listado Vehiculos</h1>
   <h2 class="text-center mb-4">Marcas de coches</h2>
 
   <!-- CONTENEDOR DE LISTA: sin d-flex, solo list-group -->

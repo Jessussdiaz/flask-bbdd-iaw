@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Registro de Marcas{% endblock %}
+{% block content %}
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="{{ url_for('lista_marcas') }}">Volver a lista de marcas</a>
+        
+          
+        </ul>
+      </div>
+    </div>
+  </nav>
+<form action="" method="post">
+
+    <label for="nombre">Nombre:</label>
+    <input type="text" class="form-control" id="nombre" name="nombre" required><br>
+
+    <label for="pais">Pais</label>
+    <input type="text" class="form-control" id="pais" name="pais" required><br>
+
+    <label for="fundador">Fundador: </label>
+    <input type="text" class="form-control" id="fundador" name="fundador" required><br>
+
+    <label for="anio_fundacion">Año fundador: </label>
+    <input type="number" class="form-control" id="anio_fundacion" name="anio_fundacion" required><br>
+
+    <input type="submit" id="send-signup" name="signup" value="Registrar" class="btn btn-primary">
+</form>
+{% endblock %}

@@ -117,10 +117,11 @@ def editar_marca(marca_id):
         nombre = request.form["nombre"]
         pais = request.form["pais"]
         anio_fundacion = request.form["anio_fundacion"]
+        fundador = request.form["fundador"]
 
         conn.execute(
-            "UPDATE marcas SET nombre = ?, pais = ?, anio_fundacion = ? WHERE id = ?",
-            (nombre, pais, anio_fundacion, marca_id)
+            "UPDATE marcas SET nombre = ?, pais = ?, anio_fundacion = ?, fundador = ? WHERE id = ?",
+            (nombre, pais, anio_fundacion, fundador, marca_id)
         )
         conn.commit()
         conn.close()
@@ -172,30 +173,51 @@ def editar_coche(coche_id):
 @app.route("/marca/<int:marca_id>/borrar", methods=["GET", "POST"])
 def borrar_marca(marca_id):
     conn = get_db_connection()
+    
+    # Obtener la marca
     marca = conn.execute(
         "SELECT * FROM marcas WHERE id = ?",
         (marca_id,)
     ).fetchone()
-
+    
     if marca is None:
         conn.close()
         abort(404)
 
-    if request.method == "POST":
-        confirmar = request.form.get("confirmar")
+    # Contar cuántos coches tiene la marca
+    total_coches = conn.execute(
+        "SELECT COUNT(*) AS total FROM coches WHERE id_marca = ?",
+        (marca_id,)
+    ).fetchone()["total"]
 
-        if confirmar == "si":
-            conn.execute("DELETE FROM coches WHERE id_marca = ?", (marca_id,))
-            conn.execute("DELETE FROM marcas WHERE id = ?", (marca_id,))
-            conn.commit()
-            conn.close()
-            return redirect(url_for("lista_marcas"))
-        else:
-            conn.close()
-            return redirect(url_for("detalle_marca", marca_id=marca_id))
+    if request.method == "POST":
+        # Borrar coches y marca
+        conn.execute("DELETE FROM coches WHERE id_marca = ?", (marca_id,))
+        conn.execute("DELETE FROM marcas WHERE id = ?", (marca_id,))
+        conn.commit()
+        conn.close()
+        return redirect(url_for("lista_marcas"))
 
     conn.close()
-    return render_template("borrar_marca.html", marca=marca)
+    return render_template("borrar_marca.html", marca=marca, total_coches=total_coches)
+
+@app.route("/añadirmarca/", methods=["GET", "POST"])
+def añadirmarca():
+    if request.method == "POST":
+        nombre = request.form["nombre"]
+        pais = request.form["pais"]
+        fundador = request.form["fundador"]
+        anio_fundacion = request.form["anio_fundacion"]
+    
+        conn = get_db_connection()
+        marca = conn.execute("INSERT INTO marcas (nombre, pais, fundador, anio_fundacion) VALUES (?, ?, ?, ?)",
+                                (nombre, pais, fundador, anio_fundacion))
+        conn.commit()
+        conn.close()
+        return redirect(url_for("lista_marcas"))
+        
+
+    return render_template("añadirmarca.html")
 
 
 if __name__ == "__main__":
