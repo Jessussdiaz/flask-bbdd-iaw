@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}Registro de Coches{% endblock %}
+{% block content %}
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="{{ url_for('lista_coches') }}">Volver a lista de coches</a>
+    </div>
+</nav>
+
+<form action="" method="post">
+    <label for="modelo">Modelo:</label>
+    <input type="text" class="form-control" id="modelo" name="modelo" required><br>
+
+    <label for="id_marca">Marca:</label>
+    <select class="form-control" id="id_marca" name="id_marca" required>
+        <option value="" disabled selected>Selecciona una marca</option>
+        {% for marca in marcas %}
+            <option value="{{ marca['id'] }}">{{ marca['nombre'] }}</option>
+        {% endfor %}
+    </select><br>
+
+    <label for="anio">Año:</label>
+    <input type="number" class="form-control" id="anio" name="anio" required><br>
+
+    <label for="tipo_motor">Tipo de Motor:</label>
+    <input type="text" class="form-control" id="tipo_motor" name="tipo_motor" placeholder="Ej: Gasolina, Eléctrico" required><br>
+
+    <label for="potencia">Potencia (CV):</label>
+    <input type="number" class="form-control" id="potencia" name="potencia" required><br>
+
+    <input type="submit" value="Registrar Coche" class="btn btn-primary">
+</form>
+{% endblock %}

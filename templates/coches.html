@@ -1,27 +1,45 @@
 {% extends 'base.html' %}
 
 {% block content %}
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="{{ url_for('home') }}">Pagina Principal</a>
+  
+      <div>
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('añadircoche') }}">Añadir Coche</a>
+          </li>
+          
+        </ul>
+      </div>
+    </div>
+  </nav>
     <h1>{% block title %} Coches {% endblock %}</h1>
         <table class="table table-striped">
             <th>
                 <tr>
                     <th>ID</th>
+                    <th>Marca</th>
                     <th>Modelo</th>
-                    <th>id_marca</th>
                     <th>Año</th>
                     <th>Tipo_motor</th>
                     <th>Potencia</th>
+                    <th>Editar Coche</th>
+                    <th>Eliminar Coche</th>
                 </tr>
             </th>
             <tbody>
                 {% for coche in coches %}
                 <tr>
                     <td>{{ coche['id'] }}</td>
+                    <td>{{ coche['marca'] }}</td>
                     <td>{{ coche['modelo'] }}</td>
-                    <td>{{ coche['id_marca'] }}</td>
                     <td>{{ coche['anio'] }}</td>
                     <td>{{ coche['tipo_motor'] }}</td>
                     <td>{{ coche['potencia'] }}</td>
+                    <td><a class="btn btn-info" style="width: 100px;" href="{{ url_for('editar_coche', coche_id=coche['id']) }}">✏️ Editar</a></td>
+
                 </tr>
                 {% endfor %}
             </tbody>

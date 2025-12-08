@@ -68,7 +68,7 @@ def lista_coches():
                m.nombre AS marca
         FROM coches c
         LEFT JOIN marcas m ON m.id = c.id_marca
-        ORDER BY marca, modelo
+        ORDER BY c.id, marca, modelo
     """).fetchall()
     conn.close()
     return render_template("coches.html", coches=coches)
@@ -218,6 +218,32 @@ def añadirmarca():
         
 
     return render_template("añadirmarca.html")
+
+
+@app.route("/añadircoche/", methods=["GET", "POST"])
+def añadircoche():
+    conn = get_db_connection()
+    
+    if request.method == "POST":
+        modelo = request.form["modelo"]
+        id_marca = request.form["id_marca"]
+        anio = request.form["anio"]
+        tipo_motor = request.form["tipo_motor"]
+        potencia = request.form["potencia"]
+    
+        conn.execute("""
+            INSERT INTO coches (modelo, id_marca, anio, tipo_motor, potencia) 
+            VALUES (?, ?, ?, ?, ?)
+        """, (modelo, id_marca, anio, tipo_motor, potencia))
+        
+        conn.commit()
+        conn.close()
+        return redirect(url_for("lista_coches"))
+
+    # Para el GET: Obtenemos las marcas para el menú desplegable
+    marcas = conn.execute("SELECT id, nombre FROM marcas ORDER BY nombre").fetchall()
+    conn.close()
+    return render_template("añadircoche.html", marcas=marcas)
 
 
 if __name__ == "__main__":

@@ -1,5 +1,17 @@
 {% extends "base.html" %}
 {% block content %}
+
+<style>
+  /* Lo justo para que funcione el zoom */
+  .zoom-hover {
+    transition: transform 0.3s ease;
+  }
+
+  .zoom-hover:hover {
+    transform: scale(1.08);
+  }
+</style>
+
 <div class="container mt-5">
   
   <div class="text-center mb-4">
@@ -7,11 +19,10 @@
     <p class="text-muted">Puedes consultar las diferentes marcas y coches</p>
   </div>
 
-  <!-- AQUÍ VA EL CENTRADO -->
   <div class="row g-4 justify-content-center">
     {% for tabla in entidades %}
       <div class="col-md-6 col-lg-4">
-        <div class="card shadow-sm h-100 border-0">
+        <div class="card shadow-sm h-100 border-0 zoom-hover">
           <div class="card-body d-flex flex-column justify-content-between">
             
             <div>
